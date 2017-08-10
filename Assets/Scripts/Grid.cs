@@ -31,8 +31,8 @@ public class Grid : MonoBehaviour {
         gridSizeX = Mathf.RoundToInt(topRight.x * 2 / gridSize);
         gridSizeY = Mathf.RoundToInt(topRight.y * 2 / gridSize);
         gridDiameter = gridSize / 2;
-        //CreateSquareGrid();
-        CreateIsometricGrid();
+        CreateSquareGrid();
+        //CreateIsometricGrid();
         DrawGrid();
 
         // Adjust the camera to move forward.

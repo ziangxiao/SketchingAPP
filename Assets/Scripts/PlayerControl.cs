@@ -43,7 +43,7 @@ public class PlayerControl : MonoBehaviour {
 
     LogTool logTool;
 
-    bool gridType = false;
+    bool IsometricGridType = false;
     bool DashedLine = false;
 
     // Use this for initialization
@@ -192,7 +192,7 @@ public class PlayerControl : MonoBehaviour {
         }
     }
 
-    public void changeGridType()
+    private void changeGridType()
     {
         AllLines.Clear();
         foreach (Object gb in GameObject.FindGameObjectsWithTag("Line"))
@@ -203,12 +203,30 @@ public class PlayerControl : MonoBehaviour {
         {
             Destroy(gb);
         }
-        gridType = !gridType;
+        /*gridType = !gridType;
         if (gridType)
             plane.GetComponent<Grid>().ChangeToSquare();
         else
-            plane.GetComponent<Grid>().ChangeToIsometric();
+            plane.GetComponent<Grid>().ChangeToIsometric();*/
 
+    }
+
+    public void SetIsometricGrid()
+    {
+        if (!IsometricGridType)
+        {
+            changeGridType();
+            plane.GetComponent<Grid>().ChangeToIsometric();
+        }
+    }
+
+    public void SetSquareGrid()
+    {
+        if (IsometricGridType)
+        {
+            changeGridType();
+            plane.GetComponent<Grid>().ChangeToSquare();
+        }
     }
 
     /// <summary>
@@ -247,8 +265,13 @@ public class PlayerControl : MonoBehaviour {
         }
     }
 
-    public void ChangeLineType()
+    public void SetDashedLine()
     {
-        DashedLine = !DashedLine;
+        DashedLine = true;
+    }
+
+    public void SetActualLine()
+    {
+        DashedLine = false;
     }
 }
