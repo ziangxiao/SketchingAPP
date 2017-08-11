@@ -90,7 +90,7 @@ public class PlayerControl : MonoBehaviour {
                     firstPoint = hitObject.transform.GetComponent<Glow>().getPosition();
                 }
 
-                LineInit();
+                LineInit(DashedLine);
 
                 firstDrawingPoint = new Vector3(firstPoint.x, firstPoint.y, firstPoint.z - offset);
                 currentLine.SetPosition(vertexCount - 2, firstDrawingPoint);
@@ -158,7 +158,7 @@ public class PlayerControl : MonoBehaviour {
     /// <summary>
     /// Initiate line object and the parameters of line renderer.
     /// </summary>
-    void LineInit()
+    void LineInit(bool _DashedLine)
     {
         GameObject currentLineObj = new GameObject();
         currentLineObj.transform.parent = LineContainer.transform;
@@ -166,7 +166,7 @@ public class PlayerControl : MonoBehaviour {
         currentLineObj.tag = "Line";
         currentLine = currentLineObj.AddComponent<LineRenderer>();
 
-        if (DashedLine)
+        if (_DashedLine)
             currentLine.material = DashedLineMaterial;
         else
             currentLine.material = LineMaterial;
@@ -182,14 +182,19 @@ public class PlayerControl : MonoBehaviour {
     /// Clear all lines with one button.
     /// </summary>
     public void clearAllLines() {
-        // Add log.
-        logTool.ClearAll();
-
         AllLines.Clear();
         foreach (Object gb in GameObject.FindGameObjectsWithTag("Line"))
         {
             Destroy(gb);
         }
+    }
+
+    public void ClearAll()
+    {
+        // Add log.
+        logTool.ClearAll();
+
+        clearAllLines();
     }
 
     private void changeGridType()
@@ -240,22 +245,22 @@ public class PlayerControl : MonoBehaviour {
     /// <summary>
     /// Load and draw all lines when clicking load log.
     /// </summary>
-    /// <param name="allLinesofLog">All lines stored in List</param>
-    public void LoadLinesFromLog(List<Vector3> allLinesofLog)
+    /// <param name="LinesofLog">All lines stored in List</param>
+    public void LoadLinesFromLog(List<Vector3> LinesofLog, bool _DashedLine)
     {
-        // Clear all lines on the panel.
-        AllLines.Clear();
+        // Clear all lines on the panel. Now we did it in LogTool.
+        /*AllLines.Clear();
         foreach (Object gb in GameObject.FindGameObjectsWithTag("Line"))
         {
             Destroy(gb);
-        }
+        }*/
 
         // Draw all lines in the log.
-        int size = allLinesofLog.ToArray().Length;
+        int size = LinesofLog.ToArray().Length;
         for (int i = 0; i < size; i += 2) {
-            LineInit();
-            Vector3 startingpoint = allLinesofLog[i];
-            Vector3 endingpoint = allLinesofLog[i + 1];
+            LineInit(_DashedLine);
+            Vector3 startingpoint = LinesofLog[i];
+            Vector3 endingpoint = LinesofLog[i + 1];
             firstDrawingPoint = new Vector3(startingpoint.x, startingpoint.y, startingpoint.z - offset);
             currentLine.SetPosition(vertexCount - 2, firstDrawingPoint);
             secondDrawingPoint = new Vector3(endingpoint.x, endingpoint.y, endingpoint.z - offset);
@@ -273,5 +278,15 @@ public class PlayerControl : MonoBehaviour {
     public void SetActualLine()
     {
         DashedLine = false;
+    }
+
+    public bool GetLineType()
+    {
+        return DashedLine;
+    }
+
+    public bool GetGridType()
+    {
+        return IsometricGridType;
     }
 }

@@ -24,7 +24,10 @@ public class LogTool : MonoBehaviour {
     string header;
     string body;
 
-    char[] delimiterChars = { ',', ' ', '"'};
+    char[] delimiterChars = { ',', ' ', '"', ':'};
+    string NameofSolidLineMaterial = "LineMaterial (Instance)";
+    string NameofDashedLineMaterial = "DashedLineMaterial (Instance)";
+    int headeroffset = 1;
 
     void Start()
     {
@@ -91,10 +94,48 @@ public class LogTool : MonoBehaviour {
 
         // StreamReader reader = new StreamReader(path);
         header = sreader.ReadLine();
-        body = sreader.ReadToEnd();
-        
+        string headerofSolidLine = sreader.ReadLine();
+        string headerofDashedLine = sreader.ReadLine();
 
-        string[] result = header.Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries);
+        body = sreader.ReadToEnd();
+        string[] SolidLines = headerofSolidLine.Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries);
+        int SolidLineNum = (SolidLines.Length - headeroffset) / 4;
+
+        string[] DashedLines = headerofDashedLine.Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries);
+        int DashedLineNum = (DashedLines.Length - headeroffset) / 4;
+
+        player.clearAllLines();
+
+        List<Vector3> SolidLinesofLog = new List<Vector3>();
+        for (int i = 0; i < SolidLineNum; i++)
+        {
+            int x1 = int.Parse(SolidLines[4 * i + headeroffset]);
+            int y1 = int.Parse(SolidLines[4 * i + 1 + headeroffset]);
+            int x2 = int.Parse(SolidLines[4 * i + 2 + headeroffset]);
+            int y2 = int.Parse(SolidLines[4 * i + 3 + headeroffset]);
+
+            Vector3 startingpoint = grid.Grid2Point(new Vector2(x1, y1));
+            Vector3 endingpoint = grid.Grid2Point(new Vector2(x2, y2));
+            SolidLinesofLog.Add(startingpoint);
+            SolidLinesofLog.Add(endingpoint);
+        }
+        player.LoadLinesFromLog(SolidLinesofLog, false);
+
+        List<Vector3> DashedLinesofLog = new List<Vector3>();
+        for (int i = 0; i < DashedLineNum; i++)
+        {
+            int x1 = int.Parse(DashedLines[4 * i + headeroffset]);
+            int y1 = int.Parse(DashedLines[4 * i + 1 + headeroffset]);
+            int x2 = int.Parse(DashedLines[4 * i + 2 + headeroffset]);
+            int y2 = int.Parse(DashedLines[4 * i + 3 + headeroffset]);
+
+            Vector3 startingpoint = grid.Grid2Point(new Vector2(x1, y1));
+            Vector3 endingpoint = grid.Grid2Point(new Vector2(x2, y2));
+            DashedLinesofLog.Add(startingpoint);
+            DashedLinesofLog.Add(endingpoint);
+        }
+        player.LoadLinesFromLog(DashedLinesofLog, true);
+        /*string[] result = header.Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries);
         List<Vector3> allLinesofLog = new List<Vector3>();
         int LineNum = int.Parse(result[2]);
         for (int i = 0; i < LineNum; i++)
@@ -104,13 +145,12 @@ public class LogTool : MonoBehaviour {
             int x2 = int.Parse(result[4 * i + 2 + 3]);
             int y2 = int.Parse(result[4 * i + 3 + 3]);
 
-
             Vector3 startingpoint = grid.Grid2Point(new Vector2(x1, y1));
             Vector3 endingpoint = grid.Grid2Point(new Vector2(x2, y2));
             allLinesofLog.Add(startingpoint);
             allLinesofLog.Add(endingpoint);
         }
-        player.LoadLinesFromLog(allLinesofLog);
+        player.LoadLinesFromLog(allLinesofLog);*/
 
         body += historyItem;
         body += "Type: ProjLoad, ";
@@ -132,7 +172,8 @@ public class LogTool : MonoBehaviour {
         Vector2 logPoint1 = grid.Point2Grid(p1);
         Vector2 logPoint2 = grid.Point2Grid(p2);
 
-        body += "Line: (" + logPoint1.x + "," + logPoint1.y + ":" + logPoint2.x + "," + logPoint2.y + "), ";
+        body += GetLineType();
+        body += ": (" + logPoint1.x + "," + logPoint1.y + ":" + logPoint2.x + "," + logPoint2.y + "), ";
         body += "Time: " + DateTime.Now + "\n";
     }
 
@@ -148,8 +189,18 @@ public class LogTool : MonoBehaviour {
         Vector2 logPoint1 = grid.Point2Grid(p1);
         Vector2 logPoint2 = grid.Point2Grid(p2);
 
-        body += "Line: (" + logPoint1.x + "," + logPoint1.y + ":" + logPoint2.x + "," + logPoint2.y + "), ";
+        body += GetLineType();
+        body += ": (" + logPoint1.x + "," + logPoint1.y + ":" + logPoint2.x + "," + logPoint2.y + "), ";
         body += "Time: " + DateTime.Now + "\n";
+    }
+
+    private string GetLineType()
+    {
+        bool DashedLine = player.GetLineType();
+        if (DashedLine)
+            return "DashedLine";
+        else
+            return "SolidLine";
     }
 
     /// <summary>
@@ -182,6 +233,7 @@ public class LogTool : MonoBehaviour {
 
         // Upload log file.
         StartCoroutine(UploadFile(header + body));
+        //Debug.Log(header + body);
 
         // Re-import the file to update the reference in the editor.
         //AssetDatabase.ImportAsset(path);
@@ -211,14 +263,32 @@ public class LogTool : MonoBehaviour {
         }
         else
         {
-            header = gridType + allLines.ToArray().Length + " ";
-            foreach(LineRenderer line in allLines)
+            header = gridType + allLines.ToArray().Length + "\n";
+            header += "SolidLine: ";
+            foreach (LineRenderer line in allLines)
             {
-                header += "\"";
-                Vector2 start = grid.Point2Grid(line.GetPosition(0));
-                Vector2 end = grid.Point2Grid(line.GetPosition(1));
-                header += start.x + ", " + start.y + ", " + end.x + ", " + end.y;
-                header += "\" ";
+                if(line.material.name == NameofSolidLineMaterial)
+                {
+                    header += "\"";
+                    Vector2 start = grid.Point2Grid(line.GetPosition(0));
+                    Vector2 end = grid.Point2Grid(line.GetPosition(1));
+                    header += start.x + ", " + start.y + ", " + end.x + ", " + end.y;
+                    header += "\" ";
+                }
+            }
+            header += "\n";
+
+            header += "DashedLine: ";
+            foreach (LineRenderer line in allLines)
+            {
+                if (line.material.name == NameofDashedLineMaterial)
+                {
+                    header += "\"";
+                    Vector2 start = grid.Point2Grid(line.GetPosition(0));
+                    Vector2 end = grid.Point2Grid(line.GetPosition(1));
+                    header += start.x + ", " + start.y + ", " + end.x + ", " + end.y;
+                    header += "\" ";
+                }
             }
             header += "\n";
         }
