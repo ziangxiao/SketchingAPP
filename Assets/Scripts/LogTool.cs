@@ -17,7 +17,6 @@ public class LogTool : MonoBehaviour {
     string uploadurl = "http://127.0.0.1:8000/uploadlog";
     string downloadurl = "http://127.0.0.1:8000/downloadlog";
 
-    string gridType = "GridISO empty ";
     string historyList = "########### History List ############\n";
     string historyItem = "##HistoryItem## ";
 
@@ -27,6 +26,11 @@ public class LogTool : MonoBehaviour {
     char[] delimiterChars = { ',', ' ', '"', ':'};
     string NameofSolidLineMaterial = "LineMaterial (Instance)";
     string NameofDashedLineMaterial = "DashedLineMaterial (Instance)";
+
+    string ISO = "GridISO";
+    string SQUARE = "GridSQUARE";
+
+
     int headeroffset = 1;
 
     void Start()
@@ -98,13 +102,23 @@ public class LogTool : MonoBehaviour {
         string headerofDashedLine = sreader.ReadLine();
 
         body = sreader.ReadToEnd();
+
+        // We're clearing all lines when setting grid type.
+        //player.clearAllLines();
+
+        string[] gridtype = header.Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries);
+        if (gridtype[0] == ISO)
+            player.SetIsometricGrid();
+        else if (gridtype[0] == SQUARE)
+            player.SetSquareGrid();
+        else
+            Debug.LogWarning("The Grid Type of log file is incorrect.");
+
         string[] SolidLines = headerofSolidLine.Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries);
         int SolidLineNum = (SolidLines.Length - headeroffset) / 4;
 
         string[] DashedLines = headerofDashedLine.Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries);
         int DashedLineNum = (DashedLines.Length - headeroffset) / 4;
-
-        player.clearAllLines();
 
         List<Vector3> SolidLinesofLog = new List<Vector3>();
         for (int i = 0; i < SolidLineNum; i++)
@@ -203,6 +217,15 @@ public class LogTool : MonoBehaviour {
             return "SolidLine";
     }
 
+    private string GetGridType()
+    {
+        bool Isometric = player.GetGridType();
+        if (Isometric)
+            return ISO;
+        else
+            return SQUARE;
+    }
+
     /// <summary>
     /// Add to the "body" log when clearing all lines.
     /// </summary>
@@ -259,11 +282,11 @@ public class LogTool : MonoBehaviour {
     private string getHeader() {
         allLines = player.getAllLines();
         if (allLines.ToArray().Length == 0) {
-            header = gridType + 0 + " \n"; 
+            header = GetGridType() + " " + 0 + " \n"; 
         }
         else
         {
-            header = gridType + allLines.ToArray().Length + "\n";
+            header = GetGridType() + " " + allLines.ToArray().Length + "\n";
             header += "SolidLine: ";
             foreach (LineRenderer line in allLines)
             {

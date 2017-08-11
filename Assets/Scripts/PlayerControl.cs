@@ -222,6 +222,7 @@ public class PlayerControl : MonoBehaviour {
         {
             changeGridType();
             plane.GetComponent<Grid>().ChangeToIsometric();
+            IsometricGridType = true;
         }
     }
 
@@ -231,6 +232,7 @@ public class PlayerControl : MonoBehaviour {
         {
             changeGridType();
             plane.GetComponent<Grid>().ChangeToSquare();
+            IsometricGridType = false;
         }
     }
 
