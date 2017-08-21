@@ -2,11 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class PlayerControl : MonoBehaviour {
 
     public GameObject plane;
     public GameObject LineContainer;
+
+    public GameObject PromptBackground;
+    public GameObject ChangeGridPrompt;
+    public GameObject ClearAllPrompt;
+
+    public ButtonColor IsometricButtonColor;
+    public ButtonColor SquareButtonColor;
 
     public Material DashedLineMaterial;
     public Material LineMaterial;
@@ -216,25 +224,77 @@ public class PlayerControl : MonoBehaviour {
 
     }
 
-    public void SetIsometricGrid()
+    public void PromptChangeToIsometric()
     {
         if (!IsometricGridType)
         {
-            changeGridType();
-            plane.GetComponent<Grid>().ChangeToIsometric();
+            PromptBackground.SetActive(true);
+            ChangeGridPrompt.SetActive(true);
             IsometricGridType = true;
         }
     }
 
-    public void SetSquareGrid()
+    public void PromptChangeToSquare()
+    {
+        if (IsometricGridType)
+        {
+            PromptBackground.SetActive(true);
+            ChangeGridPrompt.SetActive(true);
+            IsometricGridType = false;
+        }
+    }
+
+    public void ConfirmGridType()
     {
         if (IsometricGridType)
         {
             changeGridType();
+            plane.GetComponent<Grid>().ChangeToIsometric();
+            CancelPrompt();
+
+            IsometricButtonColor.Pressed();
+        }
+        else
+        {
+            changeGridType();
             plane.GetComponent<Grid>().ChangeToSquare();
-            IsometricGridType = false;
+            CancelPrompt();
+
+            SquareButtonColor.Pressed();
         }
     }
+
+    public void SetGridTypeVariable(bool _isometric)
+    {
+        IsometricGridType = _isometric;
+    }
+
+    public void CancelChangeGridType()
+    {
+        CancelPrompt();
+        IsometricGridType = !IsometricGridType;
+    }
+
+    public void PromptClearAll()
+    {
+        PromptBackground.SetActive(true);
+        ClearAllPrompt.SetActive(true);
+    }
+
+    public void ConfirmClearAll()
+    {
+        CancelPrompt();
+        clearAllLines();
+    }
+
+    public void CancelPrompt()
+    {
+        PromptBackground.SetActive(false);
+        ChangeGridPrompt.SetActive(false);
+        ClearAllPrompt.SetActive(false);
+    }
+
+    
 
     /// <summary>
     /// Get all lines that are shown on the screen.

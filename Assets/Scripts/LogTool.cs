@@ -5,11 +5,14 @@ using UnityEngine;
 using System.IO;
 using System;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
 public class LogTool : MonoBehaviour {
 
     public Grid grid;
     public PlayerControl player;
+    public Text ServerText;
+    public GameObject ServerBackground;
 
     List<LineRenderer> allLines;
 
@@ -56,11 +59,16 @@ public class LogTool : MonoBehaviour {
 
         if (www.isError)
         {
-            Debug.Log(www.error);
+            ServerBackground.SetActive(true);
+            ServerText.text = "File upload failed: ";
+            ServerText.text += www.error.ToString();
+            //Debug.Log(www.error);
         }
         else
         {
-            Debug.Log("File upload complete!");
+            ServerBackground.SetActive(true);
+            ServerText.text = "File upload completed!";
+            //Debug.Log("File upload complete!");
         }
     }
 
@@ -76,13 +84,24 @@ public class LogTool : MonoBehaviour {
 
         if (www.isError)
         {
-            Debug.Log(www.error);
+            ServerBackground.SetActive(true);
+            ServerText.text = "File download failed: ";
+            ServerText.text += www.error.ToString();
+            //Debug.Log(www.error);
         }
         else
         {
             // Debug.Log(www.downloadHandler.text);
             ParseDownloadedLog(www.downloadHandler.text);
         }
+    }
+
+    /// <summary>
+    /// A callback of "OK" button on server's message panel.
+    /// </summary>
+    public void HideServerPanel()
+    {
+        ServerBackground.SetActive(false);
     }
 
     /// <summary>
@@ -107,10 +126,14 @@ public class LogTool : MonoBehaviour {
         //player.clearAllLines();
 
         string[] gridtype = header.Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries);
-        if (gridtype[0] == ISO)
-            player.SetIsometricGrid();
-        else if (gridtype[0] == SQUARE)
-            player.SetSquareGrid();
+        if (gridtype[0] == ISO) {
+            player.SetGridTypeVariable(true);
+            player.ConfirmGridType();
+        }
+        else if (gridtype[0] == SQUARE) {
+            player.SetGridTypeVariable(false);
+            player.ConfirmGridType();
+        }
         else
             Debug.LogWarning("The Grid Type of log file is incorrect.");
 
