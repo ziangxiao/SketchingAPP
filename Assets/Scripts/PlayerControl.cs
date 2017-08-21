@@ -207,6 +207,8 @@ public class PlayerControl : MonoBehaviour {
 
     private void changeGridType()
     {
+        logTool.ResetBody();
+
         AllLines.Clear();
         foreach (Object gb in GameObject.FindGameObjectsWithTag("Line"))
         {
@@ -295,7 +297,6 @@ public class PlayerControl : MonoBehaviour {
     }
 
     
-
     /// <summary>
     /// Get all lines that are shown on the screen.
     /// </summary>

@@ -250,6 +250,14 @@ public class LogTool : MonoBehaviour {
     }
 
     /// <summary>
+    /// A function which is called when changing the grid type.
+    /// </summary>
+    public void ResetBody()
+    {
+        body = historyList;
+    }
+
+    /// <summary>
     /// Add to the "body" log when clearing all lines.
     /// </summary>
     public void ClearAll() {
