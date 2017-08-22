@@ -173,6 +173,7 @@ public class PlayerControl : MonoBehaviour {
         currentLineObj.name = "Line";
         currentLineObj.tag = "Line";
         currentLine = currentLineObj.AddComponent<LineRenderer>();
+        currentLine.textureMode = LineTextureMode.Tile;
 
         if (_DashedLine)
             currentLine.material = DashedLineMaterial;
