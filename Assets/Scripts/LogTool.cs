@@ -151,8 +151,12 @@ public class LogTool : MonoBehaviour {
             int x2 = int.Parse(SolidLines[4 * i + 2 + headeroffset]);
             int y2 = int.Parse(SolidLines[4 * i + 3 + headeroffset]);
 
-            Vector3 startingpoint = grid.Grid2Point(new Vector2(x1, y1));
-            Vector3 endingpoint = grid.Grid2Point(new Vector2(x2, y2));
+            Vector3 startingpoint = new Vector3();
+            Vector3 endingpoint = new Vector3();
+
+            startingpoint = grid.Grid2Point(new Vector2(x1, y1), gridtype[0]);
+            endingpoint = grid.Grid2Point(new Vector2(x2, y2), gridtype[0]);
+            
             SolidLinesofLog.Add(startingpoint);
             SolidLinesofLog.Add(endingpoint);
         }
@@ -166,8 +170,8 @@ public class LogTool : MonoBehaviour {
             int x2 = int.Parse(DashedLines[4 * i + 2 + headeroffset]);
             int y2 = int.Parse(DashedLines[4 * i + 3 + headeroffset]);
 
-            Vector3 startingpoint = grid.Grid2Point(new Vector2(x1, y1));
-            Vector3 endingpoint = grid.Grid2Point(new Vector2(x2, y2));
+            Vector3 startingpoint = grid.Grid2Point(new Vector2(x1, y1), gridtype[0]);
+            Vector3 endingpoint = grid.Grid2Point(new Vector2(x2, y2), gridtype[0]);
             DashedLinesofLog.Add(startingpoint);
             DashedLinesofLog.Add(endingpoint);
         }

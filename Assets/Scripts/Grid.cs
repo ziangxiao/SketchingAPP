@@ -113,8 +113,13 @@ public class Grid : MonoBehaviour {
         return new Vector2(i, j);
     }
 
-    public Vector3 Grid2Point(Vector2 coordinate) {
-        return new Vector3((2 * coordinate.x + 1) * gridDiameter - topRight.x, (2 * coordinate.y + 1) * gridDiameter - topRight.y, topRight.z);
+    public Vector3 Grid2Point(Vector2 coordinate, string GridType) {
+        if(GridType == "GridISO" && (coordinate.x % 2 != 0))
+        {
+            return new Vector3((2 * coordinate.x + 1) * gridDiameter - topRight.x, (2 * coordinate.y + 2) * gridDiameter - topRight.y, topRight.z);
+        }
+        else
+            return new Vector3((2 * coordinate.x + 1) * gridDiameter - topRight.x, (2 * coordinate.y + 1) * gridDiameter - topRight.y, topRight.z);
     }
 
     public void ChangeToSquare()
