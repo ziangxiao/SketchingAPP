@@ -17,8 +17,10 @@ public class LogTool : MonoBehaviour {
     List<LineRenderer> allLines;
 
     // string path = "Assets/Resources/log.txt";
-    string uploadurl = "http://127.0.0.1:8000/uploadlog";
-    string downloadurl = "http://127.0.0.1:8000/downloadlog";
+    // string olduploadurl = "http://127.0.0.1:8000/uploadlog";
+    // string olddownloadurl = "http://127.0.0.1:8000/downloadlog";
+    string uploadurl = "http://spatialtest.web.engr.illinois.edu/uploadlog";
+    string downloadurl = "http://spatialtest.web.engr.illinois.edu/downloadlog";
 
     string historyList = "########### History List ############\n";
     string historyItem = "##HistoryItem## ";
@@ -125,6 +127,11 @@ public class LogTool : MonoBehaviour {
         // We're clearing all lines when setting grid type.
         //player.clearAllLines();
 
+        body += historyItem;
+        body += "Type: ProjLoad, ";
+        body += "Line: (0,0:0,0), ";
+        body += "Time: " + DateTime.Now + "\n";
+
         string[] gridtype = header.Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries);
         if (gridtype[0] == ISO) {
             player.SetGridTypeVariable(true);
@@ -193,10 +200,7 @@ public class LogTool : MonoBehaviour {
         }
         player.LoadLinesFromLog(allLinesofLog);*/
 
-        body += historyItem;
-        body += "Type: ProjLoad, ";
-        body += "Line: (0,0:0,0), ";
-        body += "Time: " + DateTime.Now + "\n";
+        
 
         sreader.Close();
     }
@@ -256,9 +260,22 @@ public class LogTool : MonoBehaviour {
     /// <summary>
     /// A function which is called when changing the grid type.
     /// </summary>
-    public void ResetBody()
+    public void ChangeGridType(bool isometric)
     {
-        body = historyList;
+        if (isometric)
+        {
+            body += historyItem;
+            body += "Type: ChangeGridTypeToISO, ";
+            body += "Line: (0,0:0,0), ";
+            body += "Time: " + DateTime.Now + "\n";
+        }
+        else
+        {
+            body += historyItem;
+            body += "Type: ChangeGridTypeToSQUARE, ";
+            body += "Line: (0,0:0,0), ";
+            body += "Time: " + DateTime.Now + "\n";
+        }
     }
 
     /// <summary>

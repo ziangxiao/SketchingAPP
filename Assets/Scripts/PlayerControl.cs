@@ -208,7 +208,7 @@ public class PlayerControl : MonoBehaviour {
 
     private void changeGridType()
     {
-        logTool.ResetBody();
+        // logTool.ResetBody();
 
         AllLines.Clear();
         foreach (Object gb in GameObject.FindGameObjectsWithTag("Line"))
@@ -249,6 +249,8 @@ public class PlayerControl : MonoBehaviour {
 
     public void ConfirmGridType()
     {
+        logTool.ChangeGridType(IsometricGridType);
+
         if (IsometricGridType)
         {
             changeGridType();
@@ -287,7 +289,7 @@ public class PlayerControl : MonoBehaviour {
     public void ConfirmClearAll()
     {
         CancelPrompt();
-        clearAllLines();
+        ClearAll();
     }
 
     public void CancelPrompt()
