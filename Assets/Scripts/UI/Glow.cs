@@ -6,7 +6,7 @@ public class Glow : MonoBehaviour {
 
     void OnMouseEnter()
     {
-        transform.GetComponent<Renderer>().material.color = new Color(1f, 1f, 0f);
+        transform.GetComponent<Renderer>().material.color = new Color(249.0f/255.0f,116.0f/255.0f, 7.0f/255.0f);
     }
 
     /*void OnMouseOver()
