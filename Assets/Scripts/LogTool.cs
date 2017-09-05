@@ -59,7 +59,7 @@ public class LogTool : MonoBehaviour {
         UnityWebRequest www = UnityWebRequest.Post(uploadurl, data);
         yield return www.Send();
 
-        if (www.isError)
+        if (www.isNetworkError)
         {
             ServerBackground.SetActive(true);
             ServerText.text = "File upload failed: ";
@@ -84,7 +84,7 @@ public class LogTool : MonoBehaviour {
 
         yield return www.Send();
 
-        if (www.isError)
+        if (www.isNetworkError)
         {
             ServerBackground.SetActive(true);
             ServerText.text = "File download failed: ";
