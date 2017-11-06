@@ -19,8 +19,8 @@ public class LogTool : MonoBehaviour {
     // string path = "Assets/Resources/log.txt";
     // string olduploadurl = "http://127.0.0.1:8000/uploadlog";
     // string olddownloadurl = "http://127.0.0.1:8000/downloadlog";
-    string uploadurl = "http://spatialtest.web.engr.illinois.edu/uploadlog";
-    string downloadurl = "http://spatialtest.web.engr.illinois.edu/downloadlog";
+    string uploadurl = "http://spatialtest.web.engr.illinois.edu/uploadlog/";
+    string downloadurl = "http://spatialtest.web.engr.illinois.edu/downloadlog/";
 
     string historyList = "########### History List ############\n";
     string historyItem = "##HistoryItem## ";
@@ -59,7 +59,7 @@ public class LogTool : MonoBehaviour {
         UnityWebRequest www = UnityWebRequest.Post(uploadurl, data);
         yield return www.Send();
 
-        if (www.isError)
+        if (www.isNetworkError)
         {
             ServerBackground.SetActive(true);
             ServerText.text = "File upload failed: ";
@@ -84,7 +84,7 @@ public class LogTool : MonoBehaviour {
 
         yield return www.Send();
 
-        if (www.isError)
+        if (www.isNetworkError)
         {
             ServerBackground.SetActive(true);
             ServerText.text = "File download failed: ";
